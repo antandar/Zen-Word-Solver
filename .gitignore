@@ -1,22 +1,35 @@
-# Python
+# --- Python ---
 *.pyc
 __pycache__/
 *.pyo
 *.pyd
 *.sqlite3
+*.log
 
-# Virtual environments
+# --- Virtual environments ---
 .venv/
 env/
 venv/
 
-# IDE / Editor
+# --- IDE / Editor ---
 .vscode/
 .idea/
 
-# OS
+# --- OS ---
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# --- Ignore other unnecessary files ---
+*.egg-info/
+dist/
+build/
+
+# --- Keep project files ---
+# Эти файлы мы пушим на GitHub:
+# app.py (или main.py)
+# solver.py
+# dictionary.py
+# words_ru.txt
+# templates/
+# static/
+# requirements.txt
