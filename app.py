@@ -22,9 +22,10 @@ def index():
 @app.route("/solve", methods=["POST"])
 def solve():
     data = request.json
-    letters = data["letters"].lower()
-    min_length = int(data.get("min_length", 3))
 
+    letters = data.get("letters", "").lower()
+    min_length = int(data.get("min_length", 3))
+    letters = "".join(c for c in letters if c.isalpha())
     words = solver.find_words(letters, min_length)
     return jsonify(sorted(words, key=lambda w: (len(w), w)))
 
