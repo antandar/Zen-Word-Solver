@@ -10,7 +10,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 dictionary_path = os.path.join(BASE_DIR, "words_ru.txt")
 dictionary = Dictionary(dictionary_path)
 
-
 solver = Solver(dictionary)
 
 
