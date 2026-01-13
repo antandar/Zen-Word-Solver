@@ -3,62 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zen Words Solver</title>
+<title>Zen Word Solver</title>
+
 <style>
-/* --- Фон страницы и текстура --- */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     font-size: 18px;
-    background: linear-gradient(135deg, #4CAF50 0%, #81C784 50%, #66BB6A 100%);
+    background: linear-gradient(135deg, #3b7d3f 0%, #66a96b 50%, #8bcf90 100%);
     background-attachment: fixed;
     color: #333;
-    position: relative;
-    overflow-x: hidden; /* запрещаем горизонтальную прокрутку */
 }
 
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
-    pointer-events: none;
-}
-
-/* --- Основная контейнерная карточка --- */
 .container {
     max-width: 480px;
     margin: 20px auto;
-    background-color: rgba(255,255,255,0.92);
+    background-color: rgba(255,255,255,0.94);
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
 }
 
-/* --- Заголовок --- */
+.subtitle {
+    text-align: center;
+    font-size: 10px;
+    color: rgb(110, 108, 108);
+    margin-bottom: 6px;
+    user-select: none;
+}
+
 h1 {
     font-size: 2em;
     text-align: center;
-    color: #1b5e20; /* темнее зеленого */
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-.subtitle {
-    text-align: center;
-    font-size: 11px;          /* меньше h6 */
-    color: #b0b0b0;           /* бледно-серый */
-    margin-bottom: 6px;
-    letter-spacing: 0.3px;
-    user-select: none;        /* чтобы не выделялось */
+    margin-top: 0;
 }
 
-/* --- Поля ввода и кнопки --- */
-input, button, select, label {
+label {
+    font-weight: bold;
+}
+
+input, button {
     padding: 12px;
-    margin: 5px 0;
+    margin: 6px 0;
     font-size: 18px;
     width: 100%;
     box-sizing: border-box;
@@ -69,30 +55,34 @@ button {
     border: none;
     color: white;
     cursor: pointer;
-    margin-top: 5px;
+}
+
+#solve_button {
+    background-color: #4CAF50;
+}
+
+#clear_button {
+    background-color: #607D8B;
 }
 
 button:hover {
     opacity: 0.9;
 }
 
-#solve_button { background-color: #4CAF50; }
-#add_button { background-color: #ffa600; }
-#delete_button { background-color: #ff0000; }
-#clear_button { background-color: #2196F3; }
+#slider_val {
+    font-weight: bold;
+    margin-left: 8px;
+}
 
-/* --- Список слов --- */
 #words {
     margin-top: 15px;
     max-height: 400px;
     overflow-y: auto;
-    overflow-x: hidden;  /* запрещаем горизонтальную прокрутку */
+    overflow-x: hidden;
     padding: 10px;
-    font-size: 18px;
 
-    column-count: 3;        /* 3 колонки */
-    column-gap: 12px;       /* расстояние между колонками */
-    word-wrap: break-word;
+    column-count: 3;
+    column-gap: 12px;
 }
 
 .word-item {
@@ -100,110 +90,59 @@ button:hover {
     -webkit-column-break-inside: avoid;
     margin-bottom: 8px;
 
-    background-color: rgba(255,255,255,0.85);
+    background-color: rgba(255,255,255,0.9);
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    cursor: pointer;
     text-align: center;
+    cursor: pointer;
 
     word-break: break-word;
     overflow-wrap: anywhere;
     text-transform: uppercase;
 
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .word-item:hover {
-    background-color: #e0f0ff;
     transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    box-shadow: 0 5px 14px rgba(0,0,0,0.25);
 }
 
 .word-item.new {
     background-color: #fffa8c;
 }
 
-#slider_val {
-    font-weight: bold;
-    margin-left: 10px;
-    font-size: 20px;
-}
-
-input[type="range"] {
-    width: 100%;
-}
-
-/* --- Адаптив для мобильных --- */
 @media (max-width: 480px) {
     body { font-size: 20px; }
-    input, button, select, label { font-size: 20px; padding: 14px; }
-    #slider_val { font-size: 22px; }
-    #words { font-size: 20px; }
-}
-
-/* Анимация появления слов */
-@keyframes wordPop {
-    0% {
-        opacity: 0;
-        transform: scale(0.85) translateY(10px);
-    }
-    60% {
-        opacity: 1;
-        transform: scale(1.05) translateY(-2px);
-    }
-    100% {
-        transform: scale(1) translateY(0);
-    }
-}
-
-.word-item {
-    animation: wordPop 0.25s ease-out both;
+    input, button { font-size: 20px; padding: 14px; }
 }
 </style>
 </head>
+
 <body>
 <div class="container">
 
 <div class="subtitle">
-    © designed specifically for "Легенда номер 17" team
+© designed specifically for "Легенда номер 17" team
 </div>
 
 <h1>Zen Word Solver</h1>
 
+<label for="letters">Комбинация букв</label>
+<input type="text" id="letters" maxlength="7"
+       placeholder="Введите буквы"
+       autocomplete="off" autocorrect="off"
+       spellcheck="false">
 
- <div>
-<label for="letters">Комбинация букв:</label>
-<input type="text" id="letters" maxlength="7" placeholder="Введите буквы"
-       autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false">
-</div>
+<label for="min_length_slider">
+    Мин. длина: <span id="slider_val">3</span>
+</label>
+<input type="range" id="min_length_slider" min="3" max="7" value="3"
+       oninput="updateSliderVal()">
 
-<div>
-<label for="min_length_slider">Мин. длина: <span id="slider_val">3</span></label>
-<input type="range" id="min_length_slider" min="3" max="7" value="3" oninput="updateSliderVal()">
-</div>
-
-<div>
 <button id="solve_button" onclick="solve()">Найти слова</button>
-</div>
-
-
-<!--
-<div>
-<label for="add_word_input">Добавить / удалить слово:</label>
-<input type="text" id="add_word_input" placeholder="Слово">
-
-<button id="add_button" onclick="addWord()">Добавить в словарь</button>
-<button id="delete_button" onclick="deleteWord()">Удалить из словаря</button>
-</div>
-
--->
-
-<div>
 <button id="clear_button" onclick="clearWords()">Новая комбинация</button>
-</div>
-
-
 
 <h3>Слова:</h3>
 <div id="words"></div>
