@@ -80,3 +80,11 @@ document.addEventListener("keydown", e => {
         clearWords();
     }
 });
+
+const hide3Checkbox = document.getElementById("hide_3_letters");
+
+hide3Checkbox.addEventListener("change", () => {
+    if (lettersInput.value.trim() !== "") {
+        solve();
+    }
+});
