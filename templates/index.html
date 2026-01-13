@@ -7,79 +7,76 @@
 
 <style>
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
+    font-family: Arial, sans-serif;
     font-size: 18px;
-    background: linear-gradient(135deg, #3b7d3f 0%, #66a96b 50%, #8bcf90 100%);
-    background-attachment: fixed;
-    color: #333;
+    background: linear-gradient(135deg, #3f5c4d, #6fa18a);
+    color: #222;
 }
 
 .container {
     max-width: 480px;
     margin: 20px auto;
-    background-color: rgba(255,255,255,0.94);
     padding: 20px;
+    background: rgba(255,255,255,0.93);
     border-radius: 14px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
 }
 
 .subtitle {
     text-align: center;
-    font-size: 10px;
-    color: rgb(110, 108, 108);
-    margin-bottom: 6px;
-    user-select: none;
+    font-size: 12px;
+    color: #bbb;
+    margin-bottom: 4px;
 }
 
 h1 {
-    font-size: 2em;
     text-align: center;
-    margin-top: 0;
+    margin: 0 0 15px;
+    color: #2f4f3f;
 }
 
 label {
+    display: block;
+    margin-top: 10px;
     font-weight: bold;
 }
 
-input, button {
-    padding: 12px;
-    margin: 6px 0;
-    font-size: 18px;
+input[type="text"] {
     width: 100%;
+    padding: 12px;
+    font-size: 20px;
     box-sizing: border-box;
+    margin-top: 5px;
+    text-transform: uppercase;
+}
+
+.checkbox-row {
+    margin: 12px 0;
+    font-size: 16px;
 }
 
 button {
-    border-radius: 10px;
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    margin-top: 10px;
     border: none;
-    color: white;
+    border-radius: 10px;
     cursor: pointer;
+    color: white;
+    background: #4caf50;
 }
 
-#solve_button {
-    background-color: #4CAF50;
-}
-
-#clear_button {
-    background-color: #428bfa;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
-#slider_val {
-    font-weight: bold;
-    margin-left: 8px;
+button.secondary {
+    background: #428bfa;
 }
 
 #words {
     margin-top: 15px;
-    max-height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
     padding: 10px;
+    max-height: 420px;
+    overflow-y: auto;
 
     column-count: 3;
     column-gap: 12px;
@@ -87,35 +84,28 @@ button:hover {
 
 .word-item {
     break-inside: avoid;
-    -webkit-column-break-inside: avoid;
     margin-bottom: 8px;
-
-    background-color: rgba(255,255,255,0.9);
     padding: 10px;
-    border-radius: 8px;
     text-align: center;
+    background: #ffffff;
+    border-radius: 8px;
     cursor: pointer;
-
-    word-break: break-word;
-    overflow-wrap: anywhere;
-    text-transform: uppercase;
-
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-    transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.word-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 14px rgba(0,0,0,0.25);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    animation: wordPop 0.25s ease-out both;
 }
 
 .word-item.new {
-    background-color: #fffa8c;
+    background: #fff7a8;
+}
+
+@keyframes wordPop {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
 }
 
 @media (max-width: 480px) {
     body { font-size: 20px; }
-    input, button { font-size: 20px; padding: 14px; }
+    #words { column-count: 3; }
 }
 </style>
 </head>
@@ -123,29 +113,28 @@ button:hover {
 <body>
 <div class="container">
 
-<div class="subtitle">
-© designed specifically for "Легенда номер 17" team
-</div>
-
+<div class="subtitle">© designed specifically for "Легенда номер 17" team</div>
 <h1>Zen Word Solver</h1>
 
 <label for="letters">Комбинация букв</label>
-<input type="text" id="letters" maxlength="7"
+<input type="text"
+       id="letters"
+       maxlength="7"
        placeholder="Введите буквы"
-       autocomplete="off" autocorrect="off"
-       autocapitalize="characters"
+       autocomplete="off"
+       autocorrect="off"
        spellcheck="false">
 
-<label for="min_length_slider">
-    Мин. длина: <span id="slider_val">3</span>
-</label>
-<input type="range" id="min_length_slider" min="3" max="7" value="3"
-       oninput="updateSliderVal()">
+<div class="checkbox-row">
+    <label>
+        <input type="checkbox" id="hide_3_letters">
+        Не показывать слова из 3 букв
+    </label>
+</div>
 
-<button id="solve_button" onclick="solve()">Найти слова</button>
-<button id="clear_button" onclick="clearWords()">Новая комбинация</button>
+<button onclick="solve()">Найти слова</button>
+<button class="secondary" onclick="clearWords()">Новая комбинация</button>
 
-<h3>Слова:</h3>
 <div id="words"></div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
