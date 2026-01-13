@@ -74,3 +74,9 @@ function clearWords() {
     previousWords.clear();
     lettersInput.focus();
 }
+
+document.addEventListener("keydown", e => {
+    if (e.key === "Delete") {
+        clearWords();
+    }
+});
