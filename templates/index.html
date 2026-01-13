@@ -6,21 +6,31 @@
 <title>Zen Word Solver</title>
 
 <style>
+html, body {
+    height: 100%;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     font-size: 18px;
     background: linear-gradient(135deg, #3f5c4d, #6fa18a);
     color: #222;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
 }
 
 .container {
+    width: 100%;
     max-width: 480px;
-    margin: 20px auto;
+    margin: 20px;
     padding: 20px;
     background: rgba(255,255,255,0.93);
     border-radius: 14px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    min-height: calc(100vh - 40px);
+    box-sizing: border-box;
 }
 
 .subtitle {
@@ -77,7 +87,6 @@ button.secondary {
     padding: 10px;
     max-height: 420px;
     overflow-y: auto;
-
     column-count: 3;
     column-gap: 12px;
 }
@@ -92,6 +101,10 @@ button.secondary {
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     animation: wordPop 0.25s ease-out both;
+
+    /* 🔹 критично для длинных слов */
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .word-item.new {
@@ -114,16 +127,19 @@ button.secondary {
 <div class="container">
 
 <div class="subtitle">© designed specifically for "Легенда номер 17" team</div>
-<h1>Zen Word Solver</h1>
+<h1>Zen Words Solver</h1>
 
 <label for="letters">Комбинация букв</label>
-<input type="text"
-       id="letters"
-       maxlength="7"
-       placeholder="Введите буквы"
-       autocomplete="off"
-       autocorrect="off"
-       spellcheck="false">
+<input
+    type="text"
+    id="letters"
+    maxlength="7"
+    placeholder="Введите буквы"
+    autocomplete="off"
+    autocorrect="off"
+    spellcheck="false"
+    autocapitalize="characters"
+>
 
 <div class="checkbox-row">
     <label>
