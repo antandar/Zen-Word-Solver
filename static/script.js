@@ -54,13 +54,19 @@ function solve() {
 
         previousWords = new Set(words);
 
-        // ⬇️ прокрутка вниз
+        // ⬇️ ЖЕЛЕЗОБЕТОННАЯ автопрокрутка
         setTimeout(() => {
-            div.scrollTo({
-                top: div.scrollHeight,
-                behavior: "smooth"
+            // фиксация нижней границы
+            div.scrollTop = div.scrollHeight;
+
+            // повтор после стабилизации layout
+            requestAnimationFrame(() => {
+                div.scrollTo({
+                    top: div.scrollHeight,
+                    behavior: "smooth"
+                });
             });
-        }, 200);
+        }, 50);
     });
 }
 
@@ -83,6 +89,7 @@ document.addEventListener("keydown", e => {
 
 const hide3Checkbox = document.getElementById("hide_3_letters");
 
+// авто-перефильтрация при переключении чекбокса
 hide3Checkbox.addEventListener("change", () => {
     if (lettersInput.value.trim() !== "") {
         solve();
