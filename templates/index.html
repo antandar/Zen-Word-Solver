@@ -46,6 +46,14 @@ h1 {
     color: #1b5e20; /* темнее зеленого */
     text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
+.subtitle {
+    text-align: center;
+    font-size: 11px;          /* меньше h6 */
+    color: #b0b0b0;           /* бледно-серый */
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    user-select: none;        /* чтобы не выделялось */
+}
 
 /* --- Поля ввода и кнопки --- */
 input, button, select, label {
@@ -156,9 +164,15 @@ input[type="range"] {
 </head>
 <body>
 <div class="container">
+
+<div class="subtitle">
+    © designed specifically for "Легенда номер 17" team
+</div>
+
 <h1>Zen Word Solver</h1>
 
-<div>
+
+ <div>
 <label for="letters">Комбинация букв:</label>
 <input type="text" id="letters" maxlength="7" placeholder="Введите буквы"
        autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false">
