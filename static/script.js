@@ -1,6 +1,8 @@
 let previousWords = new Set();
 
 const lettersInput = document.getElementById("letters");
+const wordsDiv = document.getElementById("words");
+const hide3Checkbox = document.getElementById("hide_3_letters");
 
 // 🔹 только русские буквы + uppercase
 lettersInput.addEventListener("input", () => {
@@ -20,7 +22,7 @@ function solve() {
     const letters = lettersInput.value.toLowerCase();
     if (!letters) return;
 
-    const hide3 = document.getElementById("hide_3_letters").checked;
+    const hide3 = hide3Checkbox.checked;
 
     fetch("/solve", {
         method: "POST",
@@ -32,40 +34,64 @@ function solve() {
     })
     .then(res => res.json())
     .then(words => {
-        const div = document.getElementById("words");
-        div.innerHTML = "";
+    const div = document.getElementById("words");
+    div.innerHTML = "";
 
-        words.sort((a, b) => a.length - b.length || a.localeCompare(b));
+    words.sort((a, b) => a.length - b.length || a.localeCompare(b));
 
-        words.forEach((w, i) => {
-            const item = document.createElement("div");
-            item.className = "word-item";
-            item.textContent = w.toUpperCase();
+    let hasNewWords = false;
 
-            if (!previousWords.has(w)) {
-                item.classList.add("new");
-            }
+    words.forEach((w, i) => {
+        const item = document.createElement("div");
+        item.className = "word-item";
+        item.textContent = w.toUpperCase();
 
-            item.style.animationDelay = `${i * 0.03}s`;
-            item.onclick = () => copyWord(w);
+        if (!previousWords.has(w)) {
+            item.classList.add("new");
+            hasNewWords = true;
+        }
 
-            div.appendChild(item);
-        });
+        item.style.animationDelay = `${i * 0.03}s`;
+        item.onclick = () => copyWord(w);
+
+        div.appendChild(item);
+    });
+
+    // 🔹 если появились новые слова — умная прокрутка
+    if (hasNewWords) {
+        const anchor = document.createElement("div");
+        anchor.style.height = "1px";
+        anchor.style.width = "1px";
+        anchor.style.pointerEvents = "none";
+
+        div.appendChild(anchor);
+
+        setTimeout(() => {
+            anchor.scrollIntoView({
+                behavior: "smooth",
+                block: "end"
+            });
+            anchor.remove();
+        }, 50);
+    }
+
+    previousWords = new Set(words);
+});
+
 
         previousWords = new Set(words);
 
-        // ⬇️ ЖЕЛЕЗОБЕТОННАЯ автопрокрутка
+        // 🔩 ЖЕЛЕЗОБЕТОННАЯ АВТОПРОКРУТКА
         setTimeout(() => {
-            // фиксация нижней границы
-            div.scrollTop = div.scrollHeight;
+            wordsDiv.scrollTop = wordsDiv.scrollHeight;
+            const lastWord = wordsDiv.lastElementChild;
+if (lastWord) {
+    lastWord.scrollIntoView({
+        behavior: "smooth",
+        block: "end"
+    });
+}
 
-            // повтор после стабилизации layout
-            requestAnimationFrame(() => {
-                div.scrollTo({
-                    top: div.scrollHeight,
-                    behavior: "smooth"
-                });
-            });
         }, 50);
     });
 }
@@ -75,23 +101,22 @@ function copyWord(word) {
 }
 
 function clearWords() {
-    document.getElementById("words").innerHTML = "";
+    wordsDiv.innerHTML = "";
     lettersInput.value = "";
     previousWords.clear();
     lettersInput.focus();
 }
 
+// Delete = новая комбинация
 document.addEventListener("keydown", e => {
     if (e.key === "Delete") {
         clearWords();
     }
 });
 
-const hide3Checkbox = document.getElementById("hide_3_letters");
-
-// авто-перефильтрация при переключении чекбокса
+// 🔁 автофильтрация при переключении чекбокса
 hide3Checkbox.addEventListener("change", () => {
-    if (lettersInput.value.trim() !== "") {
+    if (lettersInput.value.trim()) {
         solve();
     }
 });

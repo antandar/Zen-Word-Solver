@@ -6,20 +6,16 @@
 <title>Zen Word Solver</title>
 
 <style>
-html {
-    min-height: 100%;
-}
-
+/* ===== ФОН СТРАНИЦЫ ===== */
 body {
     margin: 0;
-    min-height: 100vh;
     font-family: Arial, sans-serif;
     font-size: 18px;
     background: linear-gradient(135deg, #3f5c4d, #6fa18a);
-    background-attachment: fixed;
     color: #222;
 }
 
+/* ===== КОНТЕЙНЕР ===== */
 .container {
     max-width: 480px;
     margin: 20px auto;
@@ -28,8 +24,10 @@ body {
     border-radius: 14px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     box-sizing: border-box;
+    overflow-x: hidden; /* защита от горизонтального скролла */
 }
 
+/* ===== ЗАГОЛОВКИ ===== */
 .subtitle {
     text-align: center;
     font-size: 12px;
@@ -43,6 +41,7 @@ h1 {
     color: #2f4f3f;
 }
 
+/* ===== ФОРМА ===== */
 label {
     display: block;
     margin-top: 10px;
@@ -79,15 +78,19 @@ button.secondary {
     background: #428bfa;
 }
 
+/* ===== СПИСОК СЛОВ ===== */
 #words {
     margin-top: 15px;
     padding: 10px;
     max-height: 420px;
     overflow-y: auto;
+    overflow-x: hidden;
+
     column-count: 3;
     column-gap: 12px;
 }
 
+/* ===== КАРТОЧКИ ===== */
 .word-item {
     break-inside: avoid;
     margin-bottom: 8px;
@@ -97,25 +100,19 @@ button.secondary {
     border-radius: 8px;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    animation: wordPop 0.25s ease-out both;
 
-    /* защита от вылезания длинных слов */
     word-break: break-word;
     overflow-wrap: anywhere;
+    text-transform: uppercase;
 }
 
 .word-item.new {
     background: #fff7a8;
 }
 
-@keyframes wordPop {
-    from { opacity: 0; transform: scale(0.9); }
-    to   { opacity: 1; transform: scale(1); }
-}
-
+/* ===== АДАПТИВ ===== */
 @media (max-width: 480px) {
     body { font-size: 20px; }
-    #words { column-count: 3; }
 }
 </style>
 </head>
@@ -150,7 +147,86 @@ button.secondary {
 
 <div id="words"></div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+/* ===== JS ===== */
+
+let previousWords = new Set();
+
+const lettersInput = document.getElementById("letters");
+const wordsDiv = document.getElementById("words");
+const hide3Checkbox = document.getElementById("hide_3_letters");
+
+/* Только русские буквы + uppercase */
+lettersInput.addEventListener("input", () => {
+    const pos = lettersInput.selectionStart;
+    lettersInput.value = lettersInput.value
+        .replace(/[^а-яё]/gi, "")
+        .toUpperCase();
+    lettersInput.setSelectionRange(pos, pos);
+});
+
+/* Enter = поиск */
+lettersInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") solve();
+});
+
+/* Delete = новая комбинация */
+document.addEventListener("keydown", e => {
+    if (e.key === "Delete") clearWords();
+});
+
+/* Автопоиск при переключении чекбокса */
+hide3Checkbox.addEventListener("change", () => {
+    if (lettersInput.value.trim()) solve();
+});
+
+function solve() {
+    const letters = lettersInput.value.toLowerCase();
+    if (!letters) return;
+
+    const minLength = hide3Checkbox.checked ? 4 : 3;
+
+    fetch("/solve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ letters, min_length: minLength })
+    })
+    .then(res => res.json())
+    .then(words => {
+        wordsDiv.innerHTML = "";
+
+        words.sort((a, b) => a.length - b.length || a.localeCompare(b));
+
+        words.forEach(w => {
+            const item = document.createElement("div");
+            item.className = "word-item";
+            item.textContent = w.toUpperCase();
+
+            if (!previousWords.has(w)) {
+                item.classList.add("new");
+            }
+
+            item.onclick = () => navigator.clipboard.writeText(w);
+            wordsDiv.appendChild(item);
+        });
+
+        previousWords = new Set(words);
+
+        /* ЖЕЛЕЗОБЕТОННАЯ автопрокрутка */
+        requestAnimationFrame(() => {
+            wordsDiv.scrollTop = wordsDiv.scrollHeight;
+        });
+    });
+}
+
+function clearWords() {
+    wordsDiv.innerHTML = "";
+    lettersInput.value = "";
+    previousWords.clear();
+    lettersInput.focus();
+}
+</script>
+
 </div>
 </body>
 </html>
